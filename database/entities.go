@@ -1,8 +1,13 @@
 package database
 
-type User struct {
-	ID    uint   `gorm:"primaryKey"`
-	Name  string `gorm:"size:128"`
-	Email string `gorm:"uniqueIndex"`
-	Role  string `gorm:"type:enum('admin','student','teacher');not null"`
+import "time"
+
+type Product struct {
+	ID                uint    `gorm:"primaryKey;autoIncrement;not null" json:"id"`
+	Title             string  `gorm:"size:64;not null" json:"title"`
+	Description       *string `gorm:"size:256" json:"description"`
+	Price             int64   `gorm:"not null" json:"price"`
+	InventoryQuantity int64   `gorm:"not null;default:0" json:"inventory_quantity"`
+	CreatedAt         time.Time
+	UpdatedAt         time.Time
 }

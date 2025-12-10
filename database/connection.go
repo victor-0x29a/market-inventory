@@ -18,7 +18,7 @@ func GetConnection(cfg *config.Config) (*gorm.DB, error) {
 		log.Fatal("App external connection is failed.")
 	}
 
-	db.AutoMigrate()
+	db.AutoMigrate(&Product{})
 
 	return db, err
 }
