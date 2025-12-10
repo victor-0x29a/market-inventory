@@ -19,7 +19,14 @@ func Load() (*Config, error) {
 	dbPassword := os.Getenv("DATABASE_PASSWORD")
 	dbHost := os.Getenv("DATABASE_HOST")
 	unparsedDbPort := os.Getenv("DATABASE_PORT")
+	unparsedPort := os.Getenv("API_PORT")
 	dbPort, err := strconv.Atoi(unparsedDbPort)
+
+	if err != nil {
+		panic("Missing environment var. (1)")
+	}
+
+	apiPort, err := strconv.Atoi(unparsedPort)
 
 	if err != nil {
 		panic("Missing environment var. (1)")
@@ -31,6 +38,7 @@ func Load() (*Config, error) {
 		DATABASE_DB:       dbDatabase,
 		DATABASE_HOST:     dbHost,
 		DATABASE_PORT:     dbPort,
+		API_PORT:          apiPort,
 	}
 
 	return &config, nil
