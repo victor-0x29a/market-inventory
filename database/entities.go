@@ -1,8 +1,13 @@
 package database
 
-import "time"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type Product struct {
+	gorm.Model
 	ID                uint    `gorm:"primaryKey;autoIncrement;not null" json:"id"`
 	Title             string  `gorm:"size:64;not null" json:"title"`
 	Description       *string `gorm:"size:256" json:"description"`

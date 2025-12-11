@@ -6,7 +6,10 @@ import (
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/market-inventory/config"
+	controllers "github.com/market-inventory/controllers"
 	"github.com/market-inventory/database"
+	"github.com/market-inventory/repositories"
+	"github.com/market-inventory/services"
 )
 
 func main() {
@@ -34,7 +37,19 @@ func main() {
 		}
 	}()
 
+	productRepository := repositories.ProductRepository{
+		Database: db,
+	}
+	productService := services.ProductService{
+		Repository: &productRepository,
+	}
+
 	app := fiber.New()
+
+	productController := controllers.ProductController{
+		App:     app,
+		Service: &productService,
+	}
 
 	app.Get("/", func(c fiber.Ctx) error {
 		if err := sqlDB.Ping(); err != nil {
@@ -47,6 +62,8 @@ func main() {
 			"hello": "world",
 		})
 	})
+
+	productController.Initialize()
 
 	listenArg := fmt.Sprintf(":%d", conf.API_PORT)
 
