@@ -6,12 +6,11 @@ import (
 	"strings"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/gofiber/fiber/v3"
 	dtos "github.com/market-inventory/DTOs"
 )
 
-func ValidateStruct(initializedVar any, c fiber.Ctx) (*dtos.ApiError, int) {
-	err := json.Unmarshal(c.Body(), initializedVar)
+func ValidateStruct(initializedVar any, body []byte) (*dtos.ApiError, int) {
+	err := json.Unmarshal(body, initializedVar)
 
 	if err != nil {
 		log.Fatal(err)

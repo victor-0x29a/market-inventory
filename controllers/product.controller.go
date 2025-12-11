@@ -22,7 +22,7 @@ func postV1(service *services.ProductService) fiber.Handler {
 	return func(c fiber.Ctx) error {
 		var payload dtos.CreateProductDTO
 
-		structErr, statusCode := utils.ValidateStruct(&payload, c)
+		structErr, statusCode := utils.ValidateStruct(&payload, c.Body())
 
 		if structErr != nil {
 			return c.Status(statusCode).JSON(structErr)
