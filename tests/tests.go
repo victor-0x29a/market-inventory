@@ -6,7 +6,7 @@ import (
 )
 
 func Setup() *fiber.App {
-	app, _ := server.Setup()
+	app, _, _ := server.Setup()
 
 	return app
 }

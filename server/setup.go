@@ -7,9 +7,10 @@ import (
 	"github.com/market-inventory/database"
 	"github.com/market-inventory/repositories"
 	"github.com/market-inventory/services"
+	"gorm.io/gorm"
 )
 
-func Setup() (*fiber.App, *config.Config) {
+func Setup() (*fiber.App, *config.Config, *gorm.DB) {
 	conf, err := config.Load()
 
 	if err != nil {
@@ -27,12 +28,6 @@ func Setup() (*fiber.App, *config.Config) {
 	if err != nil {
 		panic("Error on app starting (2)")
 	}
-
-	defer func() {
-		if err := sqlDB.Close(); err != nil {
-			panic("Error on app ending")
-		}
-	}()
 
 	productRepository := repositories.ProductRepository{
 		Database: db,
@@ -62,5 +57,5 @@ func Setup() (*fiber.App, *config.Config) {
 
 	productController.Initialize()
 
-	return app, conf
+	return app, conf, db
 }
