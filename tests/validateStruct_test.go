@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	dtos "github.com/market-inventory/DTOs"
+	"github.com/market-inventory/constants"
 	"github.com/market-inventory/utils"
 	"github.com/stretchr/testify/assert"
 )
@@ -18,7 +19,7 @@ func TestMustRejectValidateStructWhenNoHaveBody(t *testing.T) {
 	data, statusCode := utils.ValidateStruct(&payload, body)
 
 	assert.Equal(t, statusCode, 500)
-	assert.Equal(t, data.Errors[0], "internal error")
+	assert.Equal(t, data.Errors[0], constants.ErrInternal.Error())
 }
 
 func TestMustSuccesValidateStruct(t *testing.T) {

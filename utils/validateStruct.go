@@ -7,21 +7,13 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	dtos "github.com/market-inventory/DTOs"
+	"github.com/market-inventory/constants"
 )
 
-func ValidateStruct(initializedVar any, body []byte) (*dtos.ApiError, int) {
-	err := json.Unmarshal(body, initializedVar)
-
-	if err != nil {
-		log.Println(err)
-		return &dtos.ApiError{
-			Errors: []string{"internal error"},
-		}, 500
-	}
-
+func Validator(refStruct any) (*dtos.ApiError, int) {
 	validate := validator.New()
 
-	err = validate.Struct(initializedVar)
+	err := validate.Struct(refStruct)
 
 	if err != nil {
 		parsedErrors := strings.Split(err.Error(), "\n")
@@ -31,4 +23,19 @@ func ValidateStruct(initializedVar any, body []byte) (*dtos.ApiError, int) {
 	}
 
 	return nil, 0
+}
+
+func ValidateStruct(initializedVar any, body []byte) (*dtos.ApiError, int) {
+	err := json.Unmarshal(body, initializedVar)
+
+	if err != nil {
+		log.Println(err)
+		return &dtos.ApiError{
+			Errors: []string{constants.ErrInternal.Error()},
+		}, 500
+	}
+
+	response, statusCode := Validator(initializedVar)
+
+	return response, statusCode
 }

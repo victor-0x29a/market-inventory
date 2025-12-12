@@ -28,3 +28,15 @@ func (repository ProductRepository) Create(data *dtos.CreateProductDTO) error {
 
 	return nil
 }
+
+func (repository ProductRepository) FindOne(productId int) (*database.Product, error) {
+	ctx := context.Background()
+
+	product, err := gorm.G[database.Product](repository.Database).Where("id = ?", productId).First(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &product, nil
+}

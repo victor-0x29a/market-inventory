@@ -6,3 +6,7 @@ type CreateProductDTO struct {
 	Price             int64   `json:"price" validate:"required,gt=0"`
 	InventoryQuantity int64   `json:"quantity" validate:"required,gt=0"`
 }
+
+type FindOneProductDTO struct {
+	ID int `validate:"required,gt=0"`
+}

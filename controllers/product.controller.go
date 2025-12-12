@@ -1,6 +1,8 @@
 package repositories
 
 import (
+	"strconv"
+
 	"github.com/gofiber/fiber/v3"
 	dtos "github.com/market-inventory/DTOs"
 	"github.com/market-inventory/services"
@@ -16,6 +18,7 @@ func (controller ProductController) Initialize() {
 	v1 := controller.App.Group("/v1/product")
 
 	v1.Post("/", postV1(controller.Service))
+	v1.Get("/:productId", getFindOneV1(controller.Service))
 }
 
 func postV1(service *services.ProductService) fiber.Handler {
@@ -37,5 +40,31 @@ func postV1(service *services.ProductService) fiber.Handler {
 		}
 
 		return c.SendStatus(204)
+	}
+}
+
+func getFindOneV1(service *services.ProductService) fiber.Handler {
+	return func(c fiber.Ctx) error {
+		productId, _ := strconv.Atoi(c.Params("productId"))
+
+		params := dtos.FindOneProductDTO{
+			ID: productId,
+		}
+
+		errorResponse, statusCode := utils.Validator(params)
+
+		if errorResponse != nil {
+			return c.Status(statusCode).JSON(errorResponse)
+		}
+
+		product, err := service.FindOneV1(params.ID)
+
+		if err != nil {
+			errorResponse, statusCode := utils.ParseCommonError(err)
+
+			return c.Status(statusCode).JSON(errorResponse)
+		}
+
+		return c.Status(200).JSON(product)
 	}
 }
