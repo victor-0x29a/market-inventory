@@ -20,6 +20,7 @@ func Load() (*Config, error) {
 	dbHost := os.Getenv("DATABASE_HOST")
 	unparsedDbPort := os.Getenv("DATABASE_PORT")
 	unparsedPort := os.Getenv("API_PORT")
+	environment := os.Getenv("APP_ENVIRONMENT")
 	dbPort, err := strconv.Atoi(unparsedDbPort)
 
 	if err != nil {
@@ -39,6 +40,7 @@ func Load() (*Config, error) {
 		DATABASE_HOST:     dbHost,
 		DATABASE_PORT:     dbPort,
 		API_PORT:          apiPort,
+		ENVIRONMENT:       environment,
 	}
 
 	return &config, nil

@@ -7,4 +7,5 @@ type Config struct {
 	DATABASE_HOST     string
 	DATABASE_PORT     int
 	API_PORT          int
+	ENVIRONMENT       string
 }

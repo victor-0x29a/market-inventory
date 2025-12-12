@@ -1,4 +1,4 @@
-package utils
+package tests
 
 import (
 	"encoding/json"
@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	dtos "github.com/market-inventory/DTOs"
+	"github.com/market-inventory/utils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -14,7 +15,7 @@ func TestMustRejectValidateStructWhenNoHaveBody(t *testing.T) {
 
 	body := make([]byte, 0)
 
-	data, statusCode := ValidateStruct(&payload, body)
+	data, statusCode := utils.ValidateStruct(&payload, body)
 
 	assert.Equal(t, statusCode, 500)
 	assert.Equal(t, data.Errors[0], "internal error")
@@ -34,7 +35,7 @@ func TestMustSuccesValidateStruct(t *testing.T) {
 		log.Fatal("error on creation of body")
 	}
 
-	data, statusCode := ValidateStruct(&payload, body)
+	data, statusCode := utils.ValidateStruct(&payload, body)
 
 	assert.Equal(t, statusCode, 0)
 	assert.Empty(t, data)
@@ -54,7 +55,7 @@ func TestMustRejectValidateStructAValidatorError(t *testing.T) {
 		log.Fatal("error on creation of body")
 	}
 
-	data, statusCode := ValidateStruct(&payload, body)
+	data, statusCode := utils.ValidateStruct(&payload, body)
 
 	assert.Equal(t, statusCode, 422)
 	assert.Equal(t, data.Errors[0], "Key: 'CreateProductDTO.Title' Error:Field validation for 'Title' failed on the 'required' tag")
