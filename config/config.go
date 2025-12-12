@@ -8,6 +8,20 @@ import (
 )
 
 func Load() (*Config, error) {
+	environment := os.Getenv("APP_ENVIRONMENT")
+
+	if environment == "test" {
+		return &Config{
+			DATABASE_USER:     "",
+			DATABASE_PASSWORD: "",
+			DATABASE_DB:       "",
+			DATABASE_HOST:     "",
+			DATABASE_PORT:     3005,
+			API_PORT:          3006,
+			ENVIRONMENT:       environment,
+		}, nil
+	}
+
 	err := godotenv.Load()
 
 	if err != nil {
@@ -20,7 +34,6 @@ func Load() (*Config, error) {
 	dbHost := os.Getenv("DATABASE_HOST")
 	unparsedDbPort := os.Getenv("DATABASE_PORT")
 	unparsedPort := os.Getenv("API_PORT")
-	environment := os.Getenv("APP_ENVIRONMENT")
 	dbPort, err := strconv.Atoi(unparsedDbPort)
 
 	if err != nil {
