@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestApiIndexRoute(t *testing.T) {
+func TestApiIndexRouteMustSuccess(t *testing.T) {
 	app := Setup()
 
 	req, _ := http.NewRequest("GET", "/", nil)
