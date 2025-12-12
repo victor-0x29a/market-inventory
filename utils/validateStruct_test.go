@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMustRejectWhenNoHaveBody(t *testing.T) {
+func TestMustRejectValidateStructWhenNoHaveBody(t *testing.T) {
 	var payload dtos.CreateProductDTO
 
 	body := make([]byte, 0)
@@ -20,7 +20,7 @@ func TestMustRejectWhenNoHaveBody(t *testing.T) {
 	assert.Equal(t, data.Errors[0], "internal error")
 }
 
-func TestMustSuccess(t *testing.T) {
+func TestMustSuccesValidateStruct(t *testing.T) {
 	var payload dtos.CreateProductDTO
 
 	body, err := json.Marshal(dtos.CreateProductDTO{
@@ -40,7 +40,7 @@ func TestMustSuccess(t *testing.T) {
 	assert.Empty(t, data)
 }
 
-func TestMustRejectAValidatorError(t *testing.T) {
+func TestMustRejectValidateStructAValidatorError(t *testing.T) {
 	var payload dtos.CreateProductDTO
 
 	body, err := json.Marshal(dtos.CreateProductDTO{

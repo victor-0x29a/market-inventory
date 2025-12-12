@@ -7,7 +7,7 @@ import (
 )
 
 func ParseCommonError(err error) (*dtos.ApiError, int) {
-	log.Fatal(err)
+	log.Println(err)
 	payload := &dtos.ApiError{
 		Errors: []string{"internal error"},
 	}
