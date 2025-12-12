@@ -13,7 +13,7 @@ func ValidateStruct(initializedVar any, body []byte) (*dtos.ApiError, int) {
 	err := json.Unmarshal(body, initializedVar)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return &dtos.ApiError{
 			Errors: []string{"internal error"},
 		}, 500
