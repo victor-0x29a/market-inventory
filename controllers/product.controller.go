@@ -18,6 +18,7 @@ func (controller ProductController) Initialize() {
 	v1 := controller.App.Group("/v1/product")
 
 	v1.Post("/", postV1(controller.Service))
+	v1.Get("/", getFindAllV1(controller.Service))
 	v1.Get("/:productId", getFindOneV1(controller.Service))
 }
 
@@ -66,5 +67,21 @@ func getFindOneV1(service *services.ProductService) fiber.Handler {
 		}
 
 		return c.Status(200).JSON(product)
+	}
+}
+
+func getFindAllV1(service *services.ProductService) fiber.Handler {
+	return func(c fiber.Ctx) error {
+		pagination := utils.ValidatePagination(c.Query("Page"), c.Query("PerPage"))
+
+		data, err := service.FindAllV1(*pagination)
+
+		if err != nil {
+			errorResponse, statusCode := utils.ParseCommonError(err)
+
+			return c.Status(statusCode).JSON(errorResponse)
+		}
+
+		return c.Status(200).JSON(data)
 	}
 }

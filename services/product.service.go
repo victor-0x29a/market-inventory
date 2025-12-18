@@ -29,3 +29,9 @@ func (service ProductService) FindOneV1(productId int) (*database.Product, error
 
 	return product, err
 }
+
+func (service ProductService) FindAllV1(pagination dtos.ApiPagination) (dtos.ApiPaginationResponse, error) {
+	products, err := service.Repository.FindAll(pagination)
+
+	return products, err
+}
