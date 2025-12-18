@@ -32,7 +32,7 @@ func TestPostApiProductControllerV1MustSuccess(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	assert.Equal(t, res.StatusCode, 204)
+	assert.Equal(t, res.StatusCode, 201)
 }
 
 func TestPostApiProductControllerV1MustRejectWhenHaveFieldMissing(t *testing.T) {
@@ -138,11 +138,13 @@ func TestGetApiProductControllerV1MustSuccess(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	assert.Equal(t, res.StatusCode, 204)
+	assert.Equal(t, res.StatusCode, 201)
 
 	req, _ = http.NewRequest("GET", "/v1/product/1", nil)
 
 	res, err = app.Test(req)
+
+	assert.Nil(t, err)
 
 	responseBody, _ := io.ReadAll(res.Body)
 
@@ -188,7 +190,7 @@ func TestGetApiProductControllerV1MustRejectWhenIdIsNaN(t *testing.T) {
 	assert.Nil(t, err)
 
 	assert.Equal(t, res.StatusCode, 422)
-	assert.Equal(t, response.Errors[0], "Key: 'FindOneProductDTO.ID' Error:Field validation for 'ID' failed on the 'required' tag")
+	assert.Equal(t, response.Errors[0], "Key: 'FetchProductDTO.ID' Error:Field validation for 'ID' failed on the 'required' tag")
 }
 
 func TestGetWithPaginationApiProductControllerV1MustSuccess(t *testing.T) {
@@ -210,7 +212,7 @@ func TestGetWithPaginationApiProductControllerV1MustSuccess(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	assert.Equal(t, res.StatusCode, 204)
+	assert.Equal(t, res.StatusCode, 201)
 
 	req, _ = http.NewRequest("GET", "/v1/product", nil)
 
@@ -251,7 +253,7 @@ func TestGetWithPaginationApiProductControllerV1MustSuccessWhenHavePaginatrionQu
 
 	res, err := app.Test(req)
 
-	assert.Equal(t, res.StatusCode, 204)
+	assert.Equal(t, res.StatusCode, 201)
 
 	assert.Nil(t, err)
 
@@ -273,7 +275,7 @@ func TestGetWithPaginationApiProductControllerV1MustSuccessWhenHavePaginatrionQu
 
 	assert.Nil(t, err)
 
-	assert.Equal(t, res.StatusCode, 204)
+	assert.Equal(t, res.StatusCode, 201)
 
 	req, _ = http.NewRequest("GET", "/v1/product?Page=1&PerPage=1", nil)
 
@@ -354,7 +356,7 @@ func TestGetWithPaginationApiProductControllerV1MustSuccessWhenIsInvalidPaginati
 
 	assert.Nil(t, err)
 
-	assert.Equal(t, res.StatusCode, 204)
+	assert.Equal(t, res.StatusCode, 201)
 
 	req, _ = http.NewRequest("GET", "/v1/product?Page=kkkk", nil)
 
@@ -398,4 +400,139 @@ func TestGetWithPaginationApiProductControllerV1MustSuccessWhenIsInvalidPaginati
 	firstRecord = raw[0].(map[string]interface{})
 
 	assert.Equal(t, firstRecord["Title"], payload.Title)
+}
+
+func TestUpdateApiProductControllerV1MustSuccess(t *testing.T) {
+	app := Setup()
+
+	payload := dtos.CreateProductDTO{
+		Title:             "Fish",
+		Description:       nil,
+		Price:             1050,
+		InventoryQuantity: 1,
+	}
+
+	body, _ := json.Marshal(payload)
+
+	req, _ := http.NewRequest("POST", "/v1/product", bytes.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+
+	res, err := app.Test(req)
+
+	assert.Nil(t, err)
+
+	assert.Equal(t, res.StatusCode, 201)
+
+	payload.Title = "Fish 2"
+
+	body, _ = json.Marshal(payload)
+
+	req, _ = http.NewRequest("PATCH", "/v1/product/1", bytes.NewReader(body))
+
+	res, err = app.Test(req)
+
+	assert.Nil(t, err)
+
+	assert.Equal(t, res.StatusCode, 204)
+
+	req, _ = http.NewRequest("GET", "/v1/product/1", nil)
+
+	res, err = app.Test(req)
+
+	assert.Nil(t, err)
+
+	responseBody, _ := io.ReadAll(res.Body)
+
+	var response database.Product
+	json.Unmarshal(responseBody, &response)
+
+	assert.Equal(t, res.StatusCode, 200)
+	assert.Equal(t, response.Title, "Fish 2")
+	assert.NotEqual(t, response.Title, "Fish")
+	assert.Equal(t, response.Price, payload.Price)
+	assert.Equal(t, response.InventoryQuantity, payload.InventoryQuantity)
+}
+
+func TestUpdateApiProductControllerV1MustRejectWhenInvalidProductId(t *testing.T) {
+	app := Setup()
+
+	payload := dtos.CreateProductDTO{
+		Title:             "Fish",
+		Description:       nil,
+		Price:             1050,
+		InventoryQuantity: 1,
+	}
+
+	body, _ := json.Marshal(payload)
+
+	req, _ := http.NewRequest("PATCH", "/v1/product/1k", bytes.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+
+	res, err := app.Test(req)
+
+	responseBody, _ := io.ReadAll(res.Body)
+
+	var response dtos.ApiError
+	json.Unmarshal(responseBody, &response)
+
+	assert.Nil(t, err)
+
+	assert.Equal(t, res.StatusCode, 422)
+	assert.Equal(t, response.Errors[0], "Key: 'FetchProductDTO.ID' Error:Field validation for 'ID' failed on the 'required' tag")
+}
+
+func TestUpdateApiProductControllerV1MustRejectWhenInvalidDataProp(t *testing.T) {
+	app := Setup()
+
+	payload := dtos.CreateProductDTO{
+		Title:             "Fish",
+		Description:       nil,
+		Price:             -1050,
+		InventoryQuantity: 1,
+	}
+
+	body, _ := json.Marshal(payload)
+
+	req, _ := http.NewRequest("PATCH", "/v1/product/1", bytes.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+
+	res, err := app.Test(req)
+
+	responseBody, _ := io.ReadAll(res.Body)
+
+	var response dtos.ApiError
+	json.Unmarshal(responseBody, &response)
+
+	assert.Nil(t, err)
+
+	assert.Equal(t, res.StatusCode, 422)
+	assert.Equal(t, response.Errors[0], "Key: 'UpdateProductDTO.Price' Error:Field validation for 'Price' failed on the 'gt' tag")
+}
+
+func TestUpdateApiProductControllerV1MustRejectWhenUnexistsProduct(t *testing.T) {
+	app := Setup()
+
+	payload := dtos.CreateProductDTO{
+		Title:             "Fish",
+		Description:       nil,
+		Price:             1050,
+		InventoryQuantity: 1,
+	}
+
+	body, _ := json.Marshal(payload)
+
+	req, _ := http.NewRequest("PATCH", "/v1/product/1", bytes.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+
+	res, err := app.Test(req)
+
+	responseBody, _ := io.ReadAll(res.Body)
+
+	var response dtos.ApiError
+	json.Unmarshal(responseBody, &response)
+
+	assert.Nil(t, err)
+
+	assert.Equal(t, res.StatusCode, 404)
+	assert.Equal(t, response.Errors[0], "product not found")
 }

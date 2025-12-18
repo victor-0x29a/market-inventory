@@ -77,3 +77,23 @@ func (repository ProductRepository) FindAll(pagination dtos.ApiPagination) (dtos
 		ItemsCount: totalItems,
 	}, nil
 }
+
+func (repository ProductRepository) Update(productId int, updatedData dtos.UpdateProductDTO) error {
+	result := repository.Database.Model(&database.Product{}).Where("id = ?", productId)
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	result = result.Updates(updatedData)
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+
+	return nil
+}

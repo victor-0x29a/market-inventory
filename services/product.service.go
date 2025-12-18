@@ -35,3 +35,13 @@ func (service ProductService) FindAllV1(pagination dtos.ApiPagination) (dtos.Api
 
 	return products, err
 }
+
+func (service ProductService) UpdateV1(productId int, updateData dtos.UpdateProductDTO) error {
+	updateErr := service.Repository.Update(productId, updateData)
+
+	if errors.Is(updateErr, gorm.ErrRecordNotFound) {
+		return constants.ErrProductNotFound
+	}
+
+	return updateErr
+}

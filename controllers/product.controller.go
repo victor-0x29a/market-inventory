@@ -20,6 +20,7 @@ func (controller ProductController) Initialize() {
 	v1.Post("/", postV1(controller.Service))
 	v1.Get("/", getFindAllV1(controller.Service))
 	v1.Get("/:productId", getFindOneV1(controller.Service))
+	v1.Patch("/:productId", updateV1(controller.Service))
 }
 
 func postV1(service *services.ProductService) fiber.Handler {
@@ -40,7 +41,7 @@ func postV1(service *services.ProductService) fiber.Handler {
 			return c.Status(statusCode).JSON(payload)
 		}
 
-		return c.SendStatus(204)
+		return c.SendStatus(201)
 	}
 }
 
@@ -48,7 +49,7 @@ func getFindOneV1(service *services.ProductService) fiber.Handler {
 	return func(c fiber.Ctx) error {
 		productId, _ := strconv.Atoi(c.Params("productId"))
 
-		params := dtos.FindOneProductDTO{
+		params := dtos.FetchProductDTO{
 			ID: productId,
 		}
 
@@ -83,5 +84,39 @@ func getFindAllV1(service *services.ProductService) fiber.Handler {
 		}
 
 		return c.Status(200).JSON(data)
+	}
+}
+
+func updateV1(service *services.ProductService) fiber.Handler {
+	return func(c fiber.Ctx) error {
+		productId, _ := strconv.Atoi(c.Params("productId"))
+
+		params := dtos.FetchProductDTO{
+			ID: productId,
+		}
+
+		errorResponse, statusCode := utils.Validator(params)
+
+		if errorResponse != nil {
+			return c.Status(statusCode).JSON(errorResponse)
+		}
+
+		var payload dtos.UpdateProductDTO
+
+		structErr, statusCode := utils.ValidateStruct(&payload, c.Body())
+
+		if structErr != nil {
+			return c.Status(statusCode).JSON(structErr)
+		}
+
+		err := service.UpdateV1(params.ID, payload)
+
+		if err != nil {
+			errorResponse, statusCode := utils.ParseCommonError(err)
+
+			return c.Status(statusCode).JSON(errorResponse)
+		}
+
+		return c.SendStatus(204)
 	}
 }
