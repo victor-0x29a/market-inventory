@@ -21,6 +21,7 @@ func (controller ProductController) Initialize() {
 	v1.Get("/", getFindAllV1(controller.Service))
 	v1.Get("/:productId", getFindOneV1(controller.Service))
 	v1.Patch("/:productId", updateV1(controller.Service))
+	v1.Delete("/:productId", deleteV1(controller.Service))
 }
 
 func postV1(service *services.ProductService) fiber.Handler {
@@ -110,6 +111,32 @@ func updateV1(service *services.ProductService) fiber.Handler {
 		}
 
 		err := service.UpdateV1(params.ID, payload)
+
+		if err != nil {
+			errorResponse, statusCode := utils.ParseCommonError(err)
+
+			return c.Status(statusCode).JSON(errorResponse)
+		}
+
+		return c.SendStatus(204)
+	}
+}
+
+func deleteV1(service *services.ProductService) fiber.Handler {
+	return func(c fiber.Ctx) error {
+		productId, _ := strconv.Atoi(c.Params("productId"))
+
+		params := dtos.FetchProductDTO{
+			ID: productId,
+		}
+
+		errorResponse, statusCode := utils.Validator(params)
+
+		if errorResponse != nil {
+			return c.Status(statusCode).JSON(errorResponse)
+		}
+
+		err := service.DeleteV1(params.ID)
 
 		if err != nil {
 			errorResponse, statusCode := utils.ParseCommonError(err)

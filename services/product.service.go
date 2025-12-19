@@ -45,3 +45,13 @@ func (service ProductService) UpdateV1(productId int, updateData dtos.UpdateProd
 
 	return updateErr
 }
+
+func (service ProductService) DeleteV1(productId int) error {
+	deleteErr := service.Repository.Delete(productId)
+
+	if errors.Is(deleteErr, gorm.ErrRecordNotFound) {
+		return constants.ErrProductNotFound
+	}
+
+	return deleteErr
+}

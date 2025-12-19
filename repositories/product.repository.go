@@ -97,3 +97,13 @@ func (repository ProductRepository) Update(productId int, updatedData dtos.Updat
 
 	return nil
 }
+
+func (repository ProductRepository) Delete(productId int) error {
+	result := repository.Database.Where("id = ?", productId).Delete(&database.Product{})
+
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+
+	return result.Error
+}
