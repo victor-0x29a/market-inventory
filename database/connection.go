@@ -29,6 +29,7 @@ func GetConnection(cfg *config.Config) (*gorm.DB, error) {
 	}
 
 	db.AutoMigrate(&Product{})
+	db.AutoMigrate(&DamageLog{})
 
 	return db, err
 }

@@ -11,3 +11,11 @@ type Product struct {
 	Price             int64   `gorm:"not null" json:"Price"`
 	InventoryQuantity int64   `gorm:"not null;default:0" json:"InventoryQuantity"`
 }
+
+type DamageLog struct {
+	gorm.Model
+	ProductID uint    `gorm:"not null"`
+	Product   Product `gorm:"foreignKey:ProductID"`
+	Quantity  int     `gorm:"not null"`
+	Reason    int     `gorm:"not null"`
+}
