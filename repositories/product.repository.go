@@ -23,11 +23,7 @@ func (repository ProductRepository) Create(data *dtos.CreateProductDTO) error {
 		InventoryQuantity: data.InventoryQuantity,
 	})
 
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 func (repository ProductRepository) FindOne(productId int) (*database.Product, error) {
