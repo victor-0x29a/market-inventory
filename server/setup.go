@@ -36,11 +36,23 @@ func Setup() (*fiber.App, *config.Config, *gorm.DB) {
 		Repository: &productRepository,
 	}
 
+	damageLogRepository := repositories.DamageLogRepository{
+		Database: db,
+	}
+	damageLogService := services.DamageLogService{
+		Repository:        &damageLogRepository,
+		ProductRepository: &productRepository,
+	}
+
 	app := fiber.New()
 
 	productController := controllers.ProductController{
 		App:     app,
 		Service: &productService,
+	}
+	damageLogController := controllers.DamageLogController{
+		App:     app,
+		Service: &damageLogService,
 	}
 
 	app.Get("/", func(c fiber.Ctx) error {
@@ -56,6 +68,7 @@ func Setup() (*fiber.App, *config.Config, *gorm.DB) {
 	})
 
 	productController.Initialize()
+	damageLogController.Initialize()
 
 	return app, conf, db
 }

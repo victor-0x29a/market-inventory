@@ -1,4 +1,4 @@
-package repositories
+package controllers
 
 import (
 	"strconv"
@@ -17,14 +17,14 @@ type ProductController struct {
 func (controller ProductController) Initialize() {
 	v1 := controller.App.Group("/v1/product")
 
-	v1.Post("/", postV1(controller.Service))
-	v1.Get("/", getFindAllV1(controller.Service))
-	v1.Get("/:productId", getFindOneV1(controller.Service))
-	v1.Patch("/:productId", updateV1(controller.Service))
-	v1.Delete("/:productId", deleteV1(controller.Service))
+	v1.Post("/", productPostV1(controller.Service))
+	v1.Get("/", productGetFindAllV1(controller.Service))
+	v1.Get("/:productId", productGetFindOneV1(controller.Service))
+	v1.Patch("/:productId", productUpdateV1(controller.Service))
+	v1.Delete("/:productId", productDeleteV1(controller.Service))
 }
 
-func postV1(service *services.ProductService) fiber.Handler {
+func productPostV1(service *services.ProductService) fiber.Handler {
 	return func(c fiber.Ctx) error {
 		var payload dtos.CreateProductDTO
 
@@ -46,7 +46,7 @@ func postV1(service *services.ProductService) fiber.Handler {
 	}
 }
 
-func getFindOneV1(service *services.ProductService) fiber.Handler {
+func productGetFindOneV1(service *services.ProductService) fiber.Handler {
 	return func(c fiber.Ctx) error {
 		productId, _ := strconv.Atoi(c.Params("productId"))
 
@@ -72,7 +72,7 @@ func getFindOneV1(service *services.ProductService) fiber.Handler {
 	}
 }
 
-func getFindAllV1(service *services.ProductService) fiber.Handler {
+func productGetFindAllV1(service *services.ProductService) fiber.Handler {
 	return func(c fiber.Ctx) error {
 		pagination := utils.ValidatePagination(c.Query("Page"), c.Query("PerPage"))
 
@@ -88,7 +88,7 @@ func getFindAllV1(service *services.ProductService) fiber.Handler {
 	}
 }
 
-func updateV1(service *services.ProductService) fiber.Handler {
+func productUpdateV1(service *services.ProductService) fiber.Handler {
 	return func(c fiber.Ctx) error {
 		productId, _ := strconv.Atoi(c.Params("productId"))
 
@@ -122,7 +122,7 @@ func updateV1(service *services.ProductService) fiber.Handler {
 	}
 }
 
-func deleteV1(service *services.ProductService) fiber.Handler {
+func productDeleteV1(service *services.ProductService) fiber.Handler {
 	return func(c fiber.Ctx) error {
 		productId, _ := strconv.Atoi(c.Params("productId"))
 
