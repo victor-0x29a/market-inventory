@@ -13,6 +13,8 @@ import (
 func Validator(refStruct any) (*dtos.ApiError, int) {
 	validate := validator.New()
 
+	validate.RegisterValidation("is_valid_damage_reason", dtos.ValidateReason)
+
 	err := validate.Struct(refStruct)
 
 	if err != nil {
