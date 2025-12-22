@@ -15,6 +15,7 @@ type DamageLogController struct {
 func (controller DamageLogController) Initialize() {
 	v1 := controller.App.Group("/v1/damage-log")
 
+	v1.Get("/", damageLogGetFindAllV1(controller.Service))
 	v1.Post("/", damageLogPostV1(controller.Service))
 }
 
@@ -38,4 +39,8 @@ func damageLogPostV1(service *services.DamageLogService) fiber.Handler {
 
 		return c.SendStatus(201)
 	}
+}
+
+func damageLogGetFindAllV1(service *services.DamageLogService) fiber.Handler {
+	return PaginatedRoute(service.FindAllV1)
 }

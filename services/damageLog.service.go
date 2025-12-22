@@ -22,3 +22,9 @@ func (service DamageLogService) CreateV1(data *dtos.CreateDamageLogDTO) error {
 
 	return err
 }
+
+func (service DamageLogService) FindAllV1(pagination dtos.ApiPagination) (dtos.ApiPaginationResponse, error) {
+	damageLogs, err := service.Repository.FindAll(pagination)
+
+	return damageLogs, err
+}
