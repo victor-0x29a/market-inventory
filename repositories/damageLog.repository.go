@@ -23,3 +23,7 @@ func (repository DamageLogRepository) Create(data *dtos.CreateDamageLogDTO) erro
 
 	return err
 }
+
+func (repository DamageLogRepository) FindAll(pagination dtos.ApiPagination) (dtos.ApiPaginationResponse, error) {
+	return PaginateEntity[database.DamageLog](pagination, repository.Database)
+}
