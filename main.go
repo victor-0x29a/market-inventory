@@ -8,18 +8,10 @@ import (
 )
 
 func main() {
-	app, conf, db := server.Setup()
+	app, conf := server.Setup()
 
 	defer func() {
-		sqlDB, err := db.DB()
-
-		if err != nil {
-			panic("Error on app ending (0)")
-		}
-
-		if err := sqlDB.Close(); err != nil {
-			panic("Error on app ending (1)")
-		}
+		log.Println("see you later...")
 	}()
 
 	listenArg := fmt.Sprintf(":%d", conf.API_PORT)
