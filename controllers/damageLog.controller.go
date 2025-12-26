@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/gofiber/fiber/v3"
 	dtos "github.com/market-inventory/DTOs"
+	"github.com/market-inventory/constants"
 	"github.com/market-inventory/services"
 	"github.com/market-inventory/utils"
 )
@@ -17,6 +18,8 @@ func (controller DamageLogController) Initialize() {
 
 	v1.Get("/", damageLogGetFindAllV1(controller.Service))
 	v1.Post("/", damageLogPostV1(controller.Service))
+
+	v1.Get("/reasons", damageLogReasonsGetV1)
 }
 
 func damageLogPostV1(service *services.DamageLogService) fiber.Handler {
@@ -43,4 +46,8 @@ func damageLogPostV1(service *services.DamageLogService) fiber.Handler {
 
 func damageLogGetFindAllV1(service *services.DamageLogService) fiber.Handler {
 	return PaginatedRoute(service.FindAllV1)
+}
+
+func damageLogReasonsGetV1(c fiber.Ctx) error {
+	return c.Status(200).JSON(constants.ReasonsMap)
 }
